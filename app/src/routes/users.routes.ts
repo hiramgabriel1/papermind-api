@@ -1,8 +1,8 @@
 import { Request, Response, Router } from "express";
-import UserService from "../services/users.service";
 import { authMiddleware } from "../guards/auth.guard";
+import { userController } from "../controllers/users.controller";
 
-const userService = new UserService();
+const usersController = new userController();
 const userRouter = Router();
 const path = "/api/v1/users";
 
@@ -11,7 +11,7 @@ const path = "/api/v1/users";
  */
 userRouter.post(`${path}/create-user`, async (req: Request, res: Response) => {
 	try {
-		await userService.createProfile(req, res);
+		await usersController.createUser(req, res);
 	} catch (error) {
 		console.error("Error en /create-user:", error);
 		res.status(500).json({ error: "Error interno del servidor" });
@@ -23,7 +23,7 @@ userRouter.post(`${path}/create-user`, async (req: Request, res: Response) => {
  */
 userRouter.post(`${path}/auth-user`, async (req: Request, res: Response) => {
 	try {
-		await userService.loginUser(req, res);
+		await usersController.loginUser(req, res);
 	} catch (error) {
 		console.error("Error en /auth-user:", error);
 		res.status(500).json({ error: "Error interno del servidor" });
@@ -38,7 +38,7 @@ userRouter.get(
 	authMiddleware,
 	async (req: Request, res: Response) => {
 		try {
-			await userService.showUsers(req, res);
+			await usersController.showUsers(req, res);
 		} catch (error) {
 			console.error("Error en /show-users:", error);
 			res.status(500).json({ error: "Error interno del servidor" });

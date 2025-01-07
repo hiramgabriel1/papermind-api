@@ -20,7 +20,7 @@ app.use(
 	})
 );
 
-// endpoints
+// todo: endpoints
 app.use(userRouter);
 
 const bootstrap = () => {
