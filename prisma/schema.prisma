@@ -13,9 +13,10 @@ datasource db {
 }
 
 model Chat {
-  id   Int    @id @default(autoincrement())
-  name String
-  User User[]
+  id     Int    @id @default(autoincrement())
+  name   String
+  userId Int
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {

@@ -31,6 +31,53 @@ userRouter.post(`${path}/auth-user`, async (req: Request, res: Response) => {
 });
 
 /**
+ * 📌 Endpoint to create user chat
+ */
+userRouter.post(
+	`${path}/create-chat/:userId`,
+	async (req: Request, res: Response) => {
+		try {
+			await usersController.createChat(req, res);
+		} catch (error) {
+			console.error("Error en /createchat:", error);
+			res.status(500).json({ error: "Error interno del servidor" });
+		}
+	}
+);
+
+/**
+ * 📌 Endpoint to view data of profile user
+ */
+userRouter.get(
+	`${path}/view-profile/:userId`,
+	authMiddleware,
+	async (req: Request, res: Response) => {
+		try {
+			await usersController.viewProfile(req, res);
+		} catch (error) {
+			console.error("Error en /show-users:", error);
+			res.status(500).json({ error: "Error interno del servidor" });
+		}
+	}
+);
+
+/**
+ * 📌 Endpoint to view chats of profile user
+ */
+userRouter.get(
+	`${path}/view-chats/:userId`,
+	authMiddleware,
+	async (req: Request, res: Response) => {
+		try {
+			await usersController.viewChatsUser(req, res);
+		} catch (error) {
+			console.error("Error en /show-users:", error);
+			res.status(500).json({ error: "Error interno del servidor" });
+		}
+	}
+);
+
+/**
  * 📌 Endpoint to show all users
  */
 userRouter.get(
