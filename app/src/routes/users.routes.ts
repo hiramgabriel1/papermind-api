@@ -7,7 +7,7 @@ const userRouter = Router();
 const path = "/api/v1/users";
 
 /**
- * 📌 Endpoint para crear usuario
+ * 📌 Endpoint to create a user
  */
 userRouter.post(`${path}/create-user`, async (req: Request, res: Response) => {
 	try {
@@ -19,7 +19,7 @@ userRouter.post(`${path}/create-user`, async (req: Request, res: Response) => {
 });
 
 /**
- * 📌 Endpoint para autenticar usuario
+ * 📌 Endpoint to login user
  */
 userRouter.post(`${path}/auth-user`, async (req: Request, res: Response) => {
 	try {
@@ -31,7 +31,7 @@ userRouter.post(`${path}/auth-user`, async (req: Request, res: Response) => {
 });
 
 /**
- * 📌 Endpoint para mostrar usuarios
+ * 📌 Endpoint to show all users
  */
 userRouter.get(
 	`${path}/show-users`,
