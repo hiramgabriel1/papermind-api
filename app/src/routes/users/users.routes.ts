@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { authMiddleware } from "../../guards/auth.guard";
-import { userController } from "../../controllers/users.controller";
+import { userController } from "../../controllers/users/users.controller";
 import fileUploaderMiddleware from "../../middlewares/fileUploader";
 
 const usersController = new userController();
