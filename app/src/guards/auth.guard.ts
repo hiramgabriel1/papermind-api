@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from "express";
+import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+
+dotenv.config();
 
 const SECRET_KEY = process.env.JWT_SECRET;
 
@@ -30,7 +33,11 @@ export const authMiddleware = (
 		(req as any).user = decoded;
 		next();
 	} catch (error) {
-		res.status(403).json({ error: "Token inválido o expirado." });
+		console.log(error);
+
+		res
+			.status(403)
+			.json({ error: "Token inválido o expirado.", message: error });
 		return;
 	}
 };

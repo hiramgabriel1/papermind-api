@@ -7,7 +7,6 @@ import { generateToken } from "../utils/generateToken";
  * @class userService to manage users in the database and return the response
  */
 export default class userService {
-
 	/**
 	 *
 	 * method to create a new user
@@ -56,7 +55,7 @@ export default class userService {
 
 	/**
 	 *
-	 * method to login a user
+	 * method to login a user and return the response
 	 *
 	 * @param req
 	 * @param res
