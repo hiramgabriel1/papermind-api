@@ -13,8 +13,13 @@
 	"license": "ISC",
 	"devDependencies": {
 		"@types/express": "^5.0.0",
+		"@types/jsonwebtoken": "^9.0.7",
 		"@types/morgan": "^1.9.9",
 		"@types/node": "^22.10.5",
+		"@prisma/client": "^6.1.0",
+		"@types/axios": "^0.14.4",
+		"@types/bcrypt": "^5.0.2",
+		"@types/cors": "^2.8.17",
 		"dotenv": "^16.4.7",
 		"morgan": "^1.10.0",
 		"nodemon": "^3.1.9",
@@ -24,11 +29,10 @@
 		"typescript": "^5.7.2"
 	},
 	"dependencies": {
-		"@prisma/client": "^6.1.0",
-		"@types/axios": "^0.14.4",
-		"@types/cors": "^2.8.17",
 		"axios": "^1.7.9",
+		"bcrypt": "^5.1.1",
 		"cors": "^2.8.5",
-		"express": "^4.21.2"
+		"express": "^4.21.2",
+		"jsonwebtoken": "^9.0.2"
 	}
 }

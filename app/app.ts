@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import cors from "cors";
+import userRouter from "./src/routes/users.routes";
 
 dotenv.config();
 
@@ -18,6 +19,9 @@ app.use(
 		exposedHeaders: ["Content-Type", "Authorization"],
 	})
 );
+
+// endpoints
+app.use(userRouter);
 
 const bootstrap = () => {
 	app.listen(PORT, () =>

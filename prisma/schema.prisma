@@ -13,9 +13,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Chat {
+  id      Int      @id @default(autoincrement())
+  name    String
+  User User[]
+}
+
 model User {
   id      Int      @id @default(autoincrement())
+  username    String
+  lastName  String
   email   String   @unique
-  name    String?
-
+  phoneNumber String @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  chats Chat[]
 }
