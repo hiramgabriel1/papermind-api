@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import prisma from "../../../prisma/prisma.client";
-import { comparePassword, encryptPassword } from "../utils/encryptPassword";
-import { generateToken } from "../utils/generateToken";
+import prisma from "../../../../prisma/prisma.client";
+import { comparePassword, encryptPassword } from "../../utils/encryptPassword";
+import { generateToken } from "../../utils/generateToken";
 
 /**
  * @class userService to manage users in the database and return the response

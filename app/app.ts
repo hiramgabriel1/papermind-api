@@ -2,7 +2,8 @@ import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import cors from "cors";
-import userRouter from "./src/routes/users.routes";
+import userRouter from "./src/routes/users/users.routes";
+import rateLimit from "express-rate-limit";
 
 /**
  * @description
@@ -16,6 +17,15 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	limit: 60,
+	message: "too many request!",
+});
+
+app.disable("x-powered-by");
+
+app.use(limiter);
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(

@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
-import { authMiddleware } from "../guards/auth.guard";
-import { userController } from "../controllers/users.controller";
+import { authMiddleware } from "../../guards/auth.guard";
+import { userController } from "../../controllers/users.controller";
+import fileUploaderMiddleware from "../../middlewares/fileUploader";
 
 const usersController = new userController();
 const userRouter = Router();
@@ -32,9 +33,15 @@ userRouter.post(`${path}/auth-user`, async (req: Request, res: Response) => {
 
 /**
  * 📌 Endpoint to create user chat
+ *
+ * @middleware fileUploaderMiddleware
+ *
+ * todo: pending...
+ *
  */
 userRouter.post(
 	`${path}/create-chat/:userId`,
+	fileUploaderMiddleware,
 	async (req: Request, res: Response) => {
 		try {
 			await usersController.createChat(req, res);
