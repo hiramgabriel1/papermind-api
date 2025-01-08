@@ -118,14 +118,14 @@ userRouter.get(
 );
 
 /**
- * 📌 Endpoint to show all users
+ * 📌 Endpoint to view one chat of user
  */
 userRouter.get(
-	`${path}/show-users`,
-	// authMiddleware,
+	`${path}/chat-user/:userId/:chatId`,
+	authMiddleware,
 	async (req: Request, res: Response) => {
 		try {
-			await usersController.showUsers(req, res);
+			await usersController.viewOneChat(req, res);
 		} catch (error) {
 			console.error("Error en /show-users:", error);
 			res.status(500).json({ error: "Error interno del servidor" });
@@ -137,11 +137,11 @@ userRouter.get(
  * 📌 Endpoint to show all users
  */
 userRouter.get(
-	`${path}/chat-user/:userId/:chatId`,
-	authMiddleware,
+	`${path}/show-users`,
+	// authMiddleware,
 	async (req: Request, res: Response) => {
 		try {
-			await usersController.viewOneChat(req, res);
+			await usersController.showUsers(req, res);
 		} catch (error) {
 			console.error("Error en /show-users:", error);
 			res.status(500).json({ error: "Error interno del servidor" });
