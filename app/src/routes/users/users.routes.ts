@@ -54,6 +54,38 @@ userRouter.post(
 );
 
 /**
+ * 📌 Endpoint to create directory to user
+ */
+userRouter.post(
+	`${path}/chat-directory/create/:userId`,
+	authMiddleware,
+	async (req: Request, res: Response) => {
+		try {
+			await usersController.createDirectoryFiles(req, res);
+		} catch (error) {
+			console.error("Error en /createchat:", error);
+			res.status(500).json({ error: "Error interno del servidor" });
+		}
+	}
+);
+
+/**
+ * 📌 Endpoint to view directories of user by userId
+ */
+userRouter.get(
+	`${path}/view-directories/:userId`,
+	authMiddleware,
+	async (req: Request, res: Response) => {
+		try {
+			await usersController.viewDirectoriesByUser(req, res);
+		} catch (error) {
+			console.error("Error en /show-users:", error);
+			res.status(500).json({ error: "Error interno del servidor" });
+		}
+	}
+);
+
+/**
  * 📌 Endpoint to view data of profile user
  */
 userRouter.get(
@@ -90,7 +122,7 @@ userRouter.get(
  */
 userRouter.get(
 	`${path}/show-users`,
-	authMiddleware,
+	// authMiddleware,
 	async (req: Request, res: Response) => {
 		try {
 			await usersController.showUsers(req, res);
@@ -106,7 +138,7 @@ userRouter.get(
  */
 userRouter.get(
 	`${path}/chat-user/:userId/:chatId`,
-	// authMiddleware,
+	authMiddleware,
 	async (req: Request, res: Response) => {
 		try {
 			await usersController.viewOneChat(req, res);

@@ -177,6 +177,60 @@ export class userController {
 		}
 	}
 
+	async createDirectoryFiles(req: Request, res: Response) {
+		try {
+			const usersService = new userService();
+
+			if (!req.params.userId) {
+				return res.status(400).json({
+					origin: `userController -> createDirectoryFiles ${req.params.userId}`,
+					error: "El id del usuario es requerido.",
+				});
+			}
+
+			if (!req.body) {
+				return res.status(400).json({
+					origin: `userController -> createDirectoryFiles ${req.params.userId}`,
+					error: "El body del directory a crear requerido.",
+				});
+			}
+
+			await usersService.createDirectoryFiles(req, res);
+		} catch (error) {
+			res.status(500).json({
+				origin: "userController -> createDirectoryFiles",
+				errorMessage: `${error}`,
+			});
+		}
+	}
+
+	/**
+	 *
+	 * method to view all directories of a user
+	 *
+	 * @param req
+	 * @param res
+	 */
+	async viewDirectoriesByUser(req: Request, res: Response) {
+		try {
+			const usersService = new userService();
+
+			if (!req.params.userId) {
+				return res.status(400).json({
+					origin: `userController -> viewDirectoriesByUser ${req.params.userId}`,
+					error: "El id del usuario es requerido.",
+				});
+			}
+
+			await usersService.viewDirectoriesByUser(req, res);
+		} catch (error) {
+			res.status(500).json({
+				origin: "userController -> viewDirectoriesByUser",
+				errorMessage: `${error}`,
+			});
+		}
+	}
+
 	/**
 	 *
 	 * method to show all users in the database

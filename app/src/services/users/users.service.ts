@@ -204,7 +204,7 @@ export default class userService {
 	 */
 	async viewOneChat(req: Request, res: Response) {
 		try {
-			const userId = Number(req.params.chatId);
+			const userId = Number(req.params.userId);
 			const chatId = Number(req.params.chatId);
 
 			if (!userId && !chatId) {
@@ -224,14 +224,20 @@ export default class userService {
 
 			const chat = await prisma.chat.findUnique({
 				where: { id: chatId, userId },
-				include: {
-					collaborators: true,
+				select: {
+					context: true,
 				},
 			});
 
 			if (chat) {
-				return res.json({
-					message: `chat encontrado para usuario con id: ${userId}`,
+				if (chat.context) {
+					return res.status(500).json({
+						message: "el chat no tiene contexto",
+					});
+				}
+
+				return res.status(200).json({
+					message: "chat encontrado",
 					chat,
 				});
 			} else {
@@ -323,6 +329,109 @@ export default class userService {
 		} catch (error) {
 			res.status(500).json({
 				origin: `userService -> createChat user ${req.body.userId}`,
+				errorMessage: `${error}`,
+			});
+		}
+	}
+
+	/**
+	 *
+	 * this method is used to create a directory to user and return the response
+	 *
+	 * @param req
+	 * @param res
+	 */
+	async createDirectoryFiles(req: Request, res: Response) {
+		try {
+			const { userId } = req.params;
+			const { titleDirectory } = req.body;
+
+			console.log(titleDirectory);
+
+			const user = await this.existsUser(Number(userId));
+
+			if (!user) {
+				return res.status(404).json({
+					error: `Usuario con id ${userId} no encontrado`,
+				});
+			}
+
+			const directoryFileNameIsUnique = await prisma.directory.findFirst({
+				where: {
+					titleDirectory,
+					userId: Number(userId),
+				},
+			});
+
+			if (directoryFileNameIsUnique) {
+				return res.status(400).json({
+					error: "El nombre del directorio ya existe",
+				});
+			}
+
+			const directory = await prisma.directory.create({
+				data: {
+					titleDirectory,
+					userId: Number(userId),
+				},
+			});
+
+			if (!directory) {
+				return res.status(400).json({
+					error: "No se pudo crear el directorio",
+				});
+			}
+
+			res.status(201).json({
+				message: `Directorio para usuario con id: ${userId} ha sido creado exitosamente`,
+				directory,
+			});
+		} catch (error) {
+			res.status(500).json({
+				origin: "userService -> createDirectoryFiles",
+				errorMessage: `directory is not created by this error: ${error}`,
+			});
+		}
+	}
+
+	/**
+	 *
+	 * method to view all directories of a user
+	 *
+	 * @param req
+	 * @param res
+	 */
+	async viewDirectoriesByUser(req: Request, res: Response) {
+		try {
+			const { userId } = req.params;
+
+			const user = await this.existsUser(Number(userId));
+
+			if (!user) {
+				return res.status(404).json({
+					error: `Usuario con id ${userId} no encontrado`,
+				});
+			}
+
+			const directories = await prisma.directory.findMany({
+				where: {
+					userId: Number(userId),
+				},
+			});
+
+			if (directories.length === 0) {
+				res.status(404).json({
+					error: `el usuario con id ${userId} no tiene directorios creados`,
+				});
+			}
+
+			res.status(200).json({
+				message: "directorios encontrados:",
+				directories,
+			});
+		} catch (error) {
+			res.status(500).json({
+				origin: "userService -> viewDirectoriesByUser",
 				errorMessage: `${error}`,
 			});
 		}

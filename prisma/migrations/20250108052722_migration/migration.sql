@@ -12,6 +12,7 @@ CREATE TABLE "Chat" (
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "fileUrl" TEXT NOT NULL,
+    "context" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
