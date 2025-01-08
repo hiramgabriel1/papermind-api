@@ -12,11 +12,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model ChatCollaborators {
+  id     Int  @id @default(autoincrement())
+  chat   Chat @relation(fields: [chatId], references: [id])
+  chatId Int
+}
+
 model Chat {
-  id     Int    @id @default(autoincrement())
-  name   String
-  userId Int
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            Int                 @id @default(autoincrement())
+  title         String
+  description   String
+  fileUrl       String
+  collaborators ChatCollaborators[]
+  userId        Int
+  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
 }
 
 model User {

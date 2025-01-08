@@ -132,7 +132,9 @@ export class userController {
 	async createChat(req: Request, res: Response) {
 		try {
 			const usersService = new userService();
-
+			if (!req.body) {
+				return res.status(400).json("send a body");
+			}
 			if (!req.params.userId) {
 				return res.status(400).json({
 					origin: `userController -> createChat ${req.body.userId}`,

@@ -42,6 +42,7 @@ userRouter.post(`${path}/auth-user`, async (req: Request, res: Response) => {
 userRouter.post(
 	`${path}/create-chat/:userId`,
 	fileUploaderMiddleware,
+	authMiddleware,
 	async (req: Request, res: Response) => {
 		try {
 			await usersController.createChat(req, res);

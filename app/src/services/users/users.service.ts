@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../../../../prisma/prisma.client";
 import { comparePassword, encryptPassword } from "../../utils/encryptPassword";
 import { generateToken } from "../../utils/generateToken";
+import { ICollaborators, IUserChat } from "./user.interfaces";
 
 /**
  * @class userService to manage users in the database and return the response
@@ -119,8 +120,6 @@ export default class userService {
 	 */
 	async viewProfile(req: Request, res: Response) {
 		try {
-			console.log(req.params.userId);
-
 			const user = await prisma.user.findUnique({
 				where: { id: Number(req.params.userId) },
 				include: {
@@ -155,7 +154,6 @@ export default class userService {
 	 */
 	async viewChatsUser(req: Request, res: Response) {
 		try {
-			console.log(req.params.userId);
 			const userId = Number(req.params.userId);
 
 			const chatsUser = await prisma.chat.findMany({
@@ -190,7 +188,18 @@ export default class userService {
 	 */
 	async createChat(req: Request, res: Response) {
 		try {
+			const fileUrl = req.file?.path;
+
 			const { userId } = req.params;
+			const { title, description, collaborators } = req.body;
+
+			if (!title || !description) {
+				return res.status(400).json({
+					origin: `userService -> createChat ${req.body.userId}`,
+					error: "Todos los campos son requeridos",
+				});
+			}
+
 			const user = await this.existsUser(Number(userId));
 
 			if (!user) {
@@ -199,10 +208,37 @@ export default class userService {
 				});
 			}
 
-			const chatData = { ...req.body };
+			[fileUrl].filter((fileType) => {
+				if (!fileType?.includes("pdf")) {
+					return res.status(400).json({
+						origin: `userService -> createChat ${req.body.userId}`,
+						error: "El archivo debe ser un PDF",
+					});
+				}
+			});
+
+			const chatData = collaborators
+				? {
+						title,
+						description,
+						fileUrl,
+						userId: Number(userId),
+						collaborators: collaborators
+							.split(",")
+							.map((collaborator: ICollaborators) => ({
+								id: collaborator.userId,
+							})),
+				  }
+				: {
+						title,
+						description,
+						fileUrl,
+						userId: Number(userId),
+				  };
 
 			const newChat = await prisma.chat.create({
-				data: { ...chatData, userId: Number(userId) },
+				// @ts-ignore ignored why fileUrl is not defined
+				data: chatData,
 			});
 
 			if (!newChat) {

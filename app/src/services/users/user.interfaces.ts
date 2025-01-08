@@ -16,10 +16,10 @@ export interface ICollaborators {
 }
 
 export interface IUserChat {
-	userId: number;
+	userId?: number;
 	title: string;
 	description: string;
-	file: string;
+	fileUrl: string;
 	collaborators?: ICollaborators[];
 	directory?: IDirectory;
 }
