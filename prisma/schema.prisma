@@ -23,6 +23,7 @@ model Chat {
   title         String
   description   String
   fileUrl       String
+  content       String
   collaborators ChatCollaborators[]
   userId        Int
   user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)

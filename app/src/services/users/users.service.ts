@@ -120,8 +120,17 @@ export default class userService {
 	 */
 	async viewProfile(req: Request, res: Response) {
 		try {
+			const userId = Number(req.params.userId);
+			const findUser = await this.existsUser(userId);
+
+			if (!findUser) {
+				return res.status(404).json({
+					messageError: `Usuario con id ${req.body.userId} no encontrado`,
+				});
+			}
+
 			const user = await prisma.user.findUnique({
-				where: { id: Number(req.params.userId) },
+				where: { id: userId },
 				include: {
 					chats: true,
 				},
@@ -155,6 +164,13 @@ export default class userService {
 	async viewChatsUser(req: Request, res: Response) {
 		try {
 			const userId = Number(req.params.userId);
+			const findUser = await this.existsUser(userId);
+
+			if (!findUser) {
+				return res.status(404).json({
+					error: `Usuario con id ${userId} no encontrado`,
+				});
+			}
 
 			const chatsUser = await prisma.chat.findMany({
 				where: { userId },
@@ -173,6 +189,59 @@ export default class userService {
 		} catch (error) {
 			res.status(500).json({
 				origin: `userService -> viewChats with id ${req.body.userId}`,
+				errorMessage: `${error}`,
+			});
+		}
+	}
+
+	/**
+	 *
+	 * this method is used to view one chat of a user
+	 *
+	 * @param req
+	 * @param res
+	 * @returns
+	 */
+	async viewOneChat(req: Request, res: Response) {
+		try {
+			const userId = Number(req.params.chatId);
+			const chatId = Number(req.params.chatId);
+
+			if (!userId && !chatId) {
+				return res.status(400).json({
+					origin: `userService -> viewOneChat ${req.params.userId} ${req.params.chatId}`,
+					error: "El id del usuario o el chatId es requerido.",
+				});
+			}
+
+			const findUser = await this.existsUser(userId);
+
+			if (!findUser) {
+				return res.status(404).json({
+					messageError: `Usuario con id ${req.params.userId} no encontrado`,
+				});
+			}
+
+			const chat = await prisma.chat.findUnique({
+				where: { id: chatId, userId },
+				include: {
+					collaborators: true,
+				},
+			});
+
+			if (chat) {
+				return res.json({
+					message: `chat encontrado para usuario con id: ${userId}`,
+					chat,
+				});
+			} else {
+				return res.status(404).json({
+					message: `No se encontró el chat con id: ${chatId} para el usuario con id: ${userId}`,
+				});
+			}
+		} catch (error) {
+			res.status(500).json({
+				origin: `userService -> viewOneChat with id ${req.params.userId} ${req.params.chatId}`,
 				errorMessage: `${error}`,
 			});
 		}

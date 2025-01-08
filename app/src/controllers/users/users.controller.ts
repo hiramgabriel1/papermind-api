@@ -124,6 +124,32 @@ export class userController {
 
 	/**
 	 *
+	 * this controller is used to view one chat of a user
+	 * @param req
+	 * @param res
+	 */
+	async viewOneChat(req: Request, res: Response) {
+		try {
+			const usersService = new userService();
+
+			if (!req.params.userId && !req.params.chatId) {
+				return res.status(400).json({
+					origin: `userController -> viewOneChat ${req.params.userId} ${req.params.chatId}`,
+					error: "El id del usuario o el chatId es requerido.",
+				});
+			}
+
+			await usersService.viewOneChat(req, res);
+		} catch (error) {
+			res.status(500).json({
+				origin: "userController -> viewOneChat",
+				errorMessage: `${error}`,
+			});
+		}
+	}
+
+	/**
+	 *
 	 * this controller is used to create a chat to user
 	 *
 	 * @param req
