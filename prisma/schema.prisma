@@ -15,34 +15,39 @@ model Directory {
   user           User[]
 }
 
-model ChatCollaborators {
+model Collaborators {
   id     Int  @id @default(autoincrement())
   chat   Chat @relation(fields: [chatId], references: [id])
   chatId Int
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Chat {
-  id            Int                 @id @default(autoincrement())
+  id            Int             @id @default(autoincrement())
   title         String
   description   String
   fileUrl       String
-  context       String?
-  collaborators ChatCollaborators[]
+  contextChat   String? // this camp is the conversation between the user and the bot /* debemos de hacer una especie de objeto o array, para guardar las preguntas que hizo el usuario y las respuesta a dichas preguntas */
+  contextDoc    String // this camp is the content file pdf
+  collaborators Collaborators[]
   userId        Int
-  user          User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 model User {
-  id          Int         @id @default(autoincrement())
-  username    String
-  lastName    String
-  email       String      @unique
-  phoneNumber String      @unique
-  password    String
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  chats       Chat[]
-  directories Directory[]
+  id            Int             @id @default(autoincrement())
+  profilePic    String?
+  username      String
+  lastName      String
+  email         String          @unique
+  phoneNumber   String          @unique
+  password      String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  chats         Chat[]
+  directories   Directory[]
+  Collaborators Collaborators[]
 }

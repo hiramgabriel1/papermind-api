@@ -3,7 +3,7 @@ import path from "path";
 
 /**
  * @description
- * this function is used to upload a file to the server
+ * this function is used to upload a profile image to server
  */
 const storage = multer.diskStorage({
 	destination: (_req, _file, cb) =>
@@ -11,8 +11,8 @@ const storage = multer.diskStorage({
 	filename: (_req, file, cb) => cb(null, `${file.originalname}`),
 });
 
-const fileUploaderMiddleware = multer({
+const profileImageUploader = multer({
 	storage,
-}).single("doc");
+}).single("profileImage");
 
-export default fileUploaderMiddleware;
+export default profileImageUploader;

@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import { authMiddleware } from "../../guards/auth.guard";
 import { userController } from "../../controllers/users/users.controller";
 import fileUploaderMiddleware from "../../middlewares/fileUploader";
+import profileImageUploader from "../../middlewares/imageUploader";
 
 const usersController = new userController();
 const userRouter = Router();
@@ -48,6 +49,80 @@ userRouter.post(
 			await usersController.createChat(req, res);
 		} catch (error) {
 			console.error("Error en /createchat:", error);
+			res.status(500).json({ error: "Error interno del servidor" });
+		}
+	}
+);
+
+/**
+ * 📌 Endpoint to query in the chat
+ *
+ * @middleware authMiddleware
+ */
+userRouter.post(
+	`${path}/chat-query/user/:userId/chat/:chatId`,
+	// fileUploaderMiddleware,
+	authMiddleware,
+	async (req: Request, res: Response) => {
+		try {
+			await usersController.conversationAI(req, res);
+		} catch (error) {
+			console.error("Error en /createchat:", error);
+			res.status(500).json({ error: "Error interno del servidor" });
+		}
+	}
+);
+
+/**
+ * 📌 Endpoint to update profile data
+ *
+ * @middleware authMiddleware
+ */
+userRouter.post(
+	`${path}/update/:userId/profile`,
+	profileImageUploader,
+	authMiddleware,
+	async (req: Request, res: Response) => {
+		try {
+			await usersController.conversationAI(req, res);
+		} catch (error) {
+			console.error("Error en /update profile:", error);
+			res.status(500).json({ error: "Error interno del servidor" });
+		}
+	}
+);
+
+/**
+ * 📌 Endpoint to generate a invitation to collaborator
+ *
+ * @middleware authMiddleware
+ */
+userRouter.post(
+	`${path}/invite/generate/user/:userId/collaborator/chat/:chatId`,
+	authMiddleware,
+	async (req: Request, res: Response) => {
+		try {
+			await usersController.generateInvitationCollaborator(req, res);
+		} catch (error) {
+			console.error("Error en /update profile:", error);
+			res.status(500).json({ error: "Error interno del servidor" });
+		}
+	}
+);
+
+/**
+ * 📌 Endpoint to validate a invitation
+ *
+ * @middleware authMiddleware
+ */
+userRouter.get(
+	`${path}/invitation/validate-token/:token`,
+	authMiddleware,
+	async (req: Request, res: Response) => {
+		try {
+			await usersController.validateTokenInvitation(req, res);
+		} catch (error) {
+			console.error("Error en /update profile:", error);
 			res.status(500).json({ error: "Error interno del servidor" });
 		}
 	}
@@ -127,7 +202,7 @@ userRouter.get(
 		try {
 			await usersController.viewOneChat(req, res);
 		} catch (error) {
-			console.error("Error en /show-users:", error);
+			console.error("Error en /view-chat router:", error);
 			res.status(500).json({ error: "Error interno del servidor" });
 		}
 	}

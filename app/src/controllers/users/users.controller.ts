@@ -104,7 +104,6 @@ export class userController {
 	async viewChatsUser(req: Request, res: Response) {
 		try {
 			const usersService = new userService();
-			console.log(req.params.userId);
 
 			if (!req.params.userId) {
 				return res.status(400).json({
@@ -158,9 +157,6 @@ export class userController {
 	async createChat(req: Request, res: Response) {
 		try {
 			const usersService = new userService();
-			if (!req.body) {
-				return res.status(400).json("send a body");
-			}
 			if (!req.params.userId) {
 				return res.status(400).json({
 					origin: `userController -> createChat ${req.body.userId}`,
@@ -177,6 +173,43 @@ export class userController {
 		}
 	}
 
+	/**
+	 *
+	 * this controller is used to write and conversate with the AI
+	 *
+	 * todo: test g4fs or use GTP4/GPT3.5
+	 *
+	 * @param req
+	 * @param res
+	 */
+	async conversationAI(req: Request, res: Response) {
+		try {
+			const usersService = new userService();
+
+			if (!req.params.userId || !req.body.queryMessage) {
+				return res.status(400).json({
+					origin: `userController -> queryChat ${req.params.userId}`,
+					error: "El id del usuario o el body message es requerido.",
+				});
+			}
+
+			await usersService.conversationAI(req, res);
+		} catch (error) {
+			res.status(500).json({
+				origin: "userController -> queryChat",
+				errorMessage: `${error}`,
+			});
+		}
+	}
+
+	/**
+	 *
+	 * this controller is used to create a directory to user
+	 *
+	 * @param req
+	 * @param res
+	 * @returns
+	 */
 	async createDirectoryFiles(req: Request, res: Response) {
 		try {
 			const usersService = new userService();
@@ -237,12 +270,107 @@ export class userController {
 	 *
 	 * @param req
 	 * @param res
+	 * @returns users in the database
 	 */
 	async showUsers(req: Request, res: Response) {
 		try {
 			const usersService = new userService();
 
 			await usersService.showUsers(req, res);
+		} catch (error) {
+			res.status(500).json({
+				origin: "userController -> showUsers",
+				errorMessage: `${error}`,
+			});
+		}
+	}
+
+	/**
+	 *
+	 * method to update a profile
+	 *
+	 * @param req
+	 * @param res
+	 * @returns profile updated
+	 */
+	async updateProfile(req: Request, res: Response) {
+		try {
+			const usersService = new userService();
+			const { userId } = req.params;
+
+			if (!userId) {
+				return res.status(400).json({
+					origin: `userController -> updateProfile ${req.params.userId}`,
+					error: "El id del usuario es requerido.",
+				});
+			}
+
+			await usersService.showUsers(req, res);
+		} catch (error) {
+			res.status(500).json({
+				origin: "userController -> showUsers",
+				errorMessage: `${error}`,
+			});
+		}
+	}
+
+	/**
+	 *
+	 * method to generate an invitation to collaborate
+	 *
+	 * @param req
+	 * @param res
+	 * @returns invitation generated
+	 */
+	async generateInvitationCollaborator(req: Request, res: Response) {
+		try {
+			const usersService = new userService();
+			const { userId, chatId } = req.params;
+			const { emailCollaborator } = req.body;
+
+			if (!userId || !chatId) {
+				return res.status(400).json({
+					origin: `userController -> generateInvitationCollaborator ${req.params.userId}`,
+					error: "El id del usuario o el chatId es requerido.",
+				});
+			}
+
+			if (!emailCollaborator) {
+				return res.status(400).json({
+					origin: `userController -> generateInvitationCollaborator ${req.params.userId}`,
+					error: "El email del colaborador es requerido.",
+				});
+			}
+
+			await usersService.generateInvitationCollaborator(req, res);
+		} catch (error) {
+			res.status(500).json({
+				origin: "userController -> showUsers",
+				errorMessage: `${error}`,
+			});
+		}
+	}
+
+	/**
+	 *
+	 * this service is used to validate a invitation token
+	 *
+	 * @param req
+	 * @param res
+	 * @returns true or false
+	 */
+	async validateTokenInvitation(req: Request, res: Response) {
+		try {
+			const usersService = new userService();
+
+			if (!req.params.token) {
+				return res.status(400).json({
+					origin: `userController -> validateTokenInvitation ${req.params.userId}`,
+					error: "El token de invitación es requerido.",
+				});
+			}
+
+			await usersService.validateInvitationCollaborator(req, res);
 		} catch (error) {
 			res.status(500).json({
 				origin: "userController -> showUsers",
