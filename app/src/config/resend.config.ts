@@ -7,18 +7,24 @@ import {
 
 dotenv.config();
 
-/**
- * this class is used to send emails with provider resend
- *
- */
-
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+/**
+ *
+ * @param reasonNotification
+ * @param email
+ * @param user
+ * @param projectName
+ * @param urlInvitation --- url created
+ * @param responseInvitation
+ * @returns
+ */
 export const sendNotificationResend = async (
 	reasonNotification: IReasonNotification,
 	email: string,
-	user?: string,
-	projectName?: string,
+	user: string,
+	projectName: string,
+	urlInvitation?: string,
 	responseInvitation?: string
 ) => {
 	let subjectReasonNotification = "";

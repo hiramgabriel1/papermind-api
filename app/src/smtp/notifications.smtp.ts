@@ -1,7 +1,10 @@
+import { sendNotificationResend } from "../config/resend.config";
+import { IReasonNotification } from "../types/smtp.types";
+
 /**
  * this class is used to send emails to collaborators
  */
-export class InvitationsService {
+export class NotificationServices {
 	/**
 	 *
 	 * this method is used to invite a collaborator to a project
@@ -14,7 +17,8 @@ export class InvitationsService {
 	async inviteCollaborator(
 		email: string,
 		urlInvitation: string,
-		projectName: string
+		projectName: string,
+		userInvited: string
 	) {
 		try {
 			if (!email || !urlInvitation || !projectName) {
@@ -24,8 +28,18 @@ export class InvitationsService {
 				};
 			}
 
+			await sendNotificationResend(
+				IReasonNotification.INVITATION_COLLABORATOR,
+				email,
+				userInvited,
+				projectName,
+				urlInvitation,
+				""
+			);
+
 			return {
 				status: 200,
+				message: "Invitación enviada",
 			};
 		} catch (error) {
 			return {
@@ -46,6 +60,7 @@ export class InvitationsService {
 	async notifyCollaborator(
 		email: string,
 		projectName: string,
+		userInvited: string,
 		description: string
 	) {
 		try {
@@ -56,8 +71,16 @@ export class InvitationsService {
 				};
 			}
 
+			await sendNotificationResend(
+				IReasonNotification.NOTIFY_COLLABORATOR,
+				email,
+				userInvited,
+				projectName
+			);
+
 			return {
 				status: 200,
+				message: "Notificación enviada",
 			};
 		} catch (error) {
 			return {
@@ -74,7 +97,7 @@ export class InvitationsService {
 	 * @param message
 	 * @returns
 	 */
-	async notifyUser(email: string, message: string) {
+	async notifyCreator(email: string, message: string) {
 		try {
 			if (!email || !message) {
 				return {
@@ -82,6 +105,15 @@ export class InvitationsService {
 					message: "Faltan datos para la notificación",
 				};
 			}
+
+			await sendNotificationResend(
+				IReasonNotification.RESPONSE_INVITATION_COLLABORATOR,
+				email,
+				"",
+				"",
+				"",
+				message
+			);
 
 			return {
 				status: 200,

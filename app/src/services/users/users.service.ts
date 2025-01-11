@@ -12,7 +12,7 @@ import { paperMindPrompt } from "../../utils/prompts.util";
 import { parseFileName } from "../../utils/parseFileName.util";
 import cloudinary from "../../config/cloudinary.config";
 import { extractContentFile } from "../../utils/extractContentFile";
-import { InvitationsService } from "../../smtp/sendInvitation.smtp";
+import { NotificationServices } from "../../smtp/notifications.smtp";
 import { ConfirmationAccountService } from "../../smtp/sendConfirmationAccount.smtp";
 
 dotenv.config();
@@ -633,7 +633,7 @@ export default class userService {
 	 */
 	async generateInvitationCollaborator(req: Request, res: Response) {
 		try {
-			const invitationService = new InvitationsService();
+			const notificationServices = new NotificationServices();
 
 			const { userId, chatId } = req.params;
 			const { emailCollaborator } = req.body;
@@ -689,10 +689,11 @@ export default class userService {
 			const secureUrlInvitation = `${process.env.URL_FRONTEND}/invitation-collab/user/${emailCollaborator}/projectName?=${detailsProject.projectName}/descrProject?=${detailsProject.descriptionProject}/token?invite=${tokenInvitation}`;
 
 			// send invitation to collaborator
-			const sendInvitation = await invitationService.inviteCollaborator(
+			const sendInvitation = await notificationServices.inviteCollaborator(
 				emailCollaborator,
 				secureUrlInvitation,
-				detailsProject.projectName
+				detailsProject.projectName,
+				findCollaboratorByEmail.username
 			);
 
 			if (sendInvitation?.status !== 200) {
@@ -724,7 +725,7 @@ export default class userService {
 	 */
 	async validateInvitationCollaborator(req: Request, res: Response) {
 		try {
-			const invitationService = new InvitationsService();
+			const notificationServices = new NotificationServices();
 
 			const { token, chatId } = req.params;
 
@@ -787,14 +788,15 @@ export default class userService {
 			const [notifyCollaborator, notifyUserCreatorInvitation] =
 				await Promise.all([
 					// notify the guest that they were accepted
-					invitationService.notifyCollaborator(
+					notificationServices.notifyCollaborator(
 						collaboratorUser.email,
 						String(findChat?.title),
+						collaboratorUser.username,
 						String(findChat?.description)
 					),
 
 					// notify the guest that the guest accepted
-					invitationService.notifyUser(
+					notificationServices.notifyCreator(
 						String(extractCreatorData?.email),
 						`El usuario ${collaboratorUser.username} se ha unido al proyecto ${findChat?.title}`
 					),
