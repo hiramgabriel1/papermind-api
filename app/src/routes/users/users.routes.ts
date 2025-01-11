@@ -99,7 +99,7 @@ userRouter.post(
  */
 userRouter.post(
 	`${path}/invite/generate/user/:userId/collaborator/chat/:chatId`,
-	authMiddleware,
+	// authMiddleware,
 	async (req: Request, res: Response) => {
 		try {
 			await usersController.generateInvitationCollaborator(req, res);

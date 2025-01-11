@@ -28,7 +28,7 @@ export class NotificationServices {
 				};
 			}
 
-			await sendNotificationResend(
+			const resNotification = await sendNotificationResend(
 				IReasonNotification.INVITATION_COLLABORATOR,
 				email,
 				userInvited,
@@ -36,6 +36,16 @@ export class NotificationServices {
 				urlInvitation,
 				""
 			);
+
+			console.log(resNotification);
+
+			if (resNotification.status !== 200) {
+				return {
+					status: 400,
+					message: "No se pudo enviar la invitación",
+					details: "origin: provider sendNotificationResend",
+				};
+			}
 
 			return {
 				status: 200,
