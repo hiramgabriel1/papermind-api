@@ -428,12 +428,20 @@ export default class userService {
 				});
 			}
 
-			const directoryFileNameIsUnique = await prisma.directory.findFirst({
-				where: {
-					titleDirectory,
-					userId: Number(userId),
-				},
-			});
+			const [directoryFileNameIsUnique, directoryCreated] = await Promise.all([
+				await prisma.directory.findFirst({
+					where: {
+						titleDirectory,
+						userId: Number(userId),
+					},
+				}),
+				await prisma.directory.create({
+					data: {
+						titleDirectory,
+						userId: Number(userId),
+					},
+				}),
+			]);
 
 			if (directoryFileNameIsUnique) {
 				return res.status(400).json({
@@ -441,14 +449,7 @@ export default class userService {
 				});
 			}
 
-			const directory = await prisma.directory.create({
-				data: {
-					titleDirectory,
-					userId: Number(userId),
-				},
-			});
-
-			if (!directory) {
+			if (!directoryCreated) {
 				return res.status(400).json({
 					error: "No se pudo crear el directorio",
 				});
@@ -456,7 +457,7 @@ export default class userService {
 
 			res.status(201).json({
 				message: `Directorio para usuario con id: ${userId} ha sido creado exitosamente`,
-				directory,
+				directoryCreated,
 			});
 		} catch (error) {
 			res.status(500).json({
@@ -690,7 +691,8 @@ export default class userService {
 			// send invitation to collaborator
 			const sendInvitation = await invitationService.inviteCollaborator(
 				emailCollaborator,
-				secureUrlInvitation
+				secureUrlInvitation,
+				detailsProject.projectName
 			);
 
 			if (sendInvitation?.status !== 200) {
@@ -787,7 +789,8 @@ export default class userService {
 					// notify the guest that they were accepted
 					invitationService.notifyCollaborator(
 						collaboratorUser.email,
-						String(findChat?.title)
+						String(findChat?.title),
+						String(findChat?.description)
 					),
 
 					// notify the guest that the guest accepted

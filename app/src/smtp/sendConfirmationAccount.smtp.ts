@@ -7,7 +7,7 @@ export class ConfirmationAccountService {
 	async sendConfirmationAccount(email: string) {
 		try {
 			const info = await transporter.sendMail({
-				from: process.env.EMAIL_USER,
+				from: process.env.EMAIL_DOMAIN_PROVIDER,
 				to: email,
 				subject: "Confirmación de cuenta - PaperMind.app",
 			});

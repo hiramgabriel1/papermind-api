@@ -138,7 +138,7 @@ userRouter.post(
 		try {
 			await usersController.createDirectoryFiles(req, res);
 		} catch (error) {
-			console.error("Error en /createchat:", error);
+			console.error("Error en /create-directory:", error);
 			res.status(500).json({ error: "Error interno del servidor" });
 		}
 	}
