@@ -1,3 +1,6 @@
+/**
+ * this class is used to send emails to collaborators
+ */
 export class InvitationsService {
 	/**
 	 *
@@ -17,7 +20,11 @@ export class InvitationsService {
 			return {
 				status: 200,
 			};
-		} catch (error) {}
+		} catch (error) {
+			return {
+				status: 400,
+			};
+		}
 	}
 
 	/**
@@ -33,7 +40,11 @@ export class InvitationsService {
 			return {
 				status: 200,
 			};
-		} catch (error) {}
+		} catch (error) {
+			return {
+				status: 400,
+			};
+		}
 	}
 
 	/**
@@ -48,6 +59,10 @@ export class InvitationsService {
 			return {
 				status: 200,
 			};
-		} catch (error) {}
+		} catch (error) {
+			return {
+				status: 400,
+			};
+		}
 	}
 }

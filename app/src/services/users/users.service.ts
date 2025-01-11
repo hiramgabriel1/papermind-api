@@ -1,4 +1,4 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { chunkProcessor, G4F } from "g4f";
 // import OpenAI from "openai";
 import dotenv from "dotenv";
@@ -13,6 +13,7 @@ import { parseFileName } from "../../utils/parseFileName.util";
 import cloudinary from "../../config/cloudinary.config";
 import { extractContentFile } from "../../utils/extractContentFile";
 import { InvitationsService } from "../../smtp/sendInvitation.smtp";
+import { ConfirmationAccountService } from "../../smtp/sendConfirmationAccount.smtp";
 
 dotenv.config();
 
@@ -85,6 +86,8 @@ export default class userService {
 	 */
 	async createProfile(req: Request, res: Response) {
 		try {
+			const confirmationAccountService = new ConfirmationAccountService();
+
 			const existingUser = await prisma.user.findUnique({
 				where: { email: req.body.email },
 			});
@@ -94,15 +97,19 @@ export default class userService {
 			}
 
 			const encryptedPassword = await encryptPassword(req.body.password);
-			const user = await prisma.user.create({
-				data: {
-					username: req.body.username,
-					lastName: req.body.lastName,
-					email: req.body.email,
-					phoneNumber: req.body.phoneNumber,
-					password: encryptedPassword,
-				},
-			});
+
+			const [user] = await Promise.all([
+				prisma.user.create({
+					data: {
+						username: req.body.username,
+						lastName: req.body.lastName,
+						email: req.body.email,
+						phoneNumber: req.body.phoneNumber,
+						password: encryptedPassword,
+					},
+				}),
+				confirmationAccountService.sendConfirmationAccount(req.body.email),
+			]);
 
 			const token = generateToken({
 				userId: user.id,
