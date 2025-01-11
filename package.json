@@ -44,6 +44,7 @@
 		"nodemailer": "^6.9.16",
 		"openai": "^4.78.0",
 		"pdf-parse": "^1.1.1",
-		"pdf.js-extract": "^0.2.1"
+		"pdf.js-extract": "^0.2.1",
+		"resend": "^4.0.1"
 	}
 }

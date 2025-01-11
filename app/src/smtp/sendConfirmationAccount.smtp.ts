@@ -9,7 +9,7 @@ export class ConfirmationAccountService {
 			const info = await transporter.sendMail({
 				from: process.env.EMAIL_USER,
 				to: email,
-				subject: "perro",
+				subject: "Confirmación de cuenta - PaperMind.app",
 			});
 
 			if (!info.accepted.length) throw new Error("Email not sent");
