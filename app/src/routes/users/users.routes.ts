@@ -99,7 +99,7 @@ userRouter.post(
  */
 userRouter.post(
 	`${path}/invite/generate/user/:userId/collaborator/chat/:chatId`,
-	// authMiddleware,
+	authMiddleware,
 	async (req: Request, res: Response) => {
 		try {
 			await usersController.generateInvitationCollaborator(req, res);
@@ -201,6 +201,22 @@ userRouter.get(
 	async (req: Request, res: Response) => {
 		try {
 			await usersController.viewOneChat(req, res);
+		} catch (error) {
+			console.error("Error en /view-chat router:", error);
+			res.status(500).json({ error: "Error interno del servidor" });
+		}
+	}
+);
+
+/**
+ * 📌 Endpoint to assign permissions to collaborators
+ */
+userRouter.get(
+	`${path}/chat-permissions/creator/:userId/chat/:chatId`,
+	authMiddleware,
+	async (req: Request, res: Response) => {
+		try {
+			await usersController.assignPermissions(req, res);
 		} catch (error) {
 			console.error("Error en /view-chat router:", error);
 			res.status(500).json({ error: "Error interno del servidor" });

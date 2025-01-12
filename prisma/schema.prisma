@@ -16,11 +16,12 @@ model Directory {
 }
 
 model Collaborators {
-  id     Int  @id @default(autoincrement())
-  chat   Chat @relation(fields: [chatId], references: [id])
-  chatId Int
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          Int      @id @default(autoincrement())
+  chat        Chat     @relation(fields: [chatId], references: [id])
+  chatId      Int
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permissions String[] // this camp is the permissions of the user in the chat
 }
 
 model Chat {
