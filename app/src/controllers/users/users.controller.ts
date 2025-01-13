@@ -378,4 +378,32 @@ export class userController {
 			});
 		}
 	}
+
+	/**
+	 *
+	 * this service is used to assign permissions to a collaborator
+	 *
+	 * @param req
+	 * @param res
+	 * @returns true or false
+	 */
+	async assignPermissions(req: Request, res: Response) {
+		try {
+			const usersService = new userService();
+
+			if (!req.params.userId || !req.params.chatId || !req.body.Isreadonly) {
+				return res.status(400).json({
+					origin: `userController -> assignPermissions ${req.params.userId}`,
+					error: "we need userId, chatId and isreadonly",
+				});
+			}
+
+			await usersService.assignPermissions(req, res);
+		} catch (error) {
+			res.status(500).json({
+				origin: "userController -> showUsers",
+				errorMessage: `${error}`,
+			});
+		}
+	}
 }

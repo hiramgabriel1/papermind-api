@@ -212,7 +212,7 @@ userRouter.get(
  * 📌 Endpoint to assign permissions to collaborators
  */
 userRouter.get(
-	`${path}/chat-permissions/creator/:userId/chat/:chatId`,
+	`${path}/chat-permissions/creator/:userId/chat/:chatId/permissions/:Isreadonly`,
 	authMiddleware,
 	async (req: Request, res: Response) => {
 		try {

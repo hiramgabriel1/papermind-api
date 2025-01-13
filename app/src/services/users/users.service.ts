@@ -513,8 +513,6 @@ export default class userService {
 	/**
 	 *
 	 * this method is used to conversate with the AI
-	 * todo: debemos pasarle el contenido del archivo pdf
-	 * todo: aqui debemos recibir la respuesta de la AI y guardarla en la base de datos
 	 *
 	 * @param req {queryMessage}
 	 * @param res
@@ -820,6 +818,77 @@ export default class userService {
 			console.error("Error en validateInvitationCollaborator:", error);
 			res.status(500).json({
 				origin: "userService -> validateInvitationCollaborator",
+				errorMessage: `${error}`,
+			});
+		}
+	}
+
+	/**
+	 *
+	 * todo: pending to implement
+	 *
+	 * this service is used to assign permissions to collaborator
+	 *
+	 * @param req
+	 * @param res
+	 *
+	 */
+	async assignPermissions(req: Request, res: Response) {
+		try {
+			const { userId, chatId, Isreadonly } = req.params;
+
+			const findUser = await this.existsUser(Number(userId));
+
+			if (!findUser) {
+				return res.status(404).json({
+					messageError: `Usuario con id ${userId} no encontrado`,
+				});
+			}
+
+			const [findChat, userIsCreator] = await Promise.all([
+				prisma.chat.findFirst({
+					where: {
+						id: Number(chatId),
+					},
+				}),
+				prisma.chat.findFirst({
+					where: {
+						id: Number(chatId),
+						userId: Number(userId),
+					},
+				}),
+			]);
+
+			if (!findChat) {
+				return res.status(404).json({
+					messageError: `Chat con id ${chatId} no encontrado`,
+				});
+			}
+
+			if (!userIsCreator) {
+				return res.status(400).json({
+					messageError: `El usuario no es el creador del chat`,
+				});
+			}
+
+			const assignPermissions = await prisma.collaborators.update({
+				where: {
+					id: Number(userId),
+					chatId: findChat.id,
+					userId: Number(userId),
+				},
+				data: {
+					permissions: Boolean(Isreadonly),
+				},
+			});
+
+			return res.status(200).json({
+				message: "Permisos asignados correctamente",
+				assignPermissions,
+			});
+		} catch (error) {
+			res.status(500).json({
+				origin: "userService -> assign Permissions",
 				errorMessage: `${error}`,
 			});
 		}
