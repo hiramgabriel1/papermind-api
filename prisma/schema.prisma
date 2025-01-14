@@ -29,7 +29,7 @@ model Chat {
   title         String
   description   String
   fileUrl       String
-  contextChat   String? // this camp is the conversation between the user and the bot /* debemos de hacer una especie de objeto o array, para guardar las preguntas que hizo el usuario y las respuesta a dichas preguntas */
+  contextChat   Json? // this camp is the conversation between the user and the bot /* debemos de hacer una especie de objeto o array, para guardar las preguntas que hizo el usuario y las respuesta a dichas preguntas */
   contextDoc    String // this camp is the content file pdf
   collaborators Collaborators[]
   userId        Int

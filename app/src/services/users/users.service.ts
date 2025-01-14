@@ -530,49 +530,38 @@ export default class userService {
 				});
 			}
 
-			const query = await prisma.chat.findFirst({
-				where: {
-					userId: Number(chatId),
-				},
+			const chat = await prisma.chat.findUnique({
+				where: { id: Number(chatId), userId: Number(userId) },
 			});
 
-			if (!query) {
+			if (!chat) {
 				return res.status(404).json({
-					messageError: `Chat con id ${req.body.chatId} no encontrado`,
+					messageError: `Chat con id ${chatId} no encontrado`,
 				});
 			}
 
-			const { contextDoc } = query;
-			const answerPaperMind = await this.answerPaperMind(
-				contextDoc,
-				queryMessage
-			);
+			const { contextDoc, contextChat } = chat;
+			const systemAnswer = await this.answerPaperMind(contextDoc, queryMessage);
 
-			const responsePaperMind = await prisma.chat.update({
-				where: {
-					id: Number(chatId),
-					userId: Number(userId),
-				},
+			let messagesHistory = Array.isArray(contextChat) ? contextChat : [];
 
-				data: {
-					contextChat: answerPaperMind,
-					id: Number(chatId),
-				},
+			messagesHistory.push({
+				user: queryMessage,
+				systemAnswer: systemAnswer,
 			});
 
-			if (!responsePaperMind) {
-				return res.status(400).json({
-					messageError: `No se pudo guardar la respuesta en la base de datos`,
-				});
-			}
+			await prisma.chat.update({
+				where: { id: Number(chatId) },
+				data: { contextChat: messagesHistory },
+			});
 
 			res.status(200).json({
-				message: "Respuesta",
-				answerPaperMind,
+				message: "Respuesta guardada exitosamente",
+				messages: messagesHistory,
 			});
 		} catch (error) {
 			res.status(500).json({
-				origin: "userService -> queryChat",
+				origin: "userService -> conversationAI",
 				errorMessage: `${error}`,
 			});
 		}

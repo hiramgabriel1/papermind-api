@@ -24,7 +24,6 @@ const limiter = rateLimit({
 });
 
 app.disable("x-powered-by");
-
 app.use(limiter);
 app.use(express.json());
 app.use(morgan("dev"));
